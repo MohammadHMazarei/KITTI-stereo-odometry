@@ -71,7 +71,7 @@ We implemented a Stereo-VO pipeline to track the camera's path through **KITTI O
 ### Trajectory Result
 *(The blue line represents our estimated path, while the green dashed line is the ground truth).*
 
-![VO Trajectory](figures/eval_report.png)
+![VO Trajectory](figures/eval_report.png?v=2)
 
 ---
 
