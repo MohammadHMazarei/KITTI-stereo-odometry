@@ -53,16 +53,16 @@ We evaluated the algorithms based on **MAE** (Mean Absolute Error) and **Bad Pix
 
 ---
 
-## 2. Monocular Visual Odometry (Motion Estimation)
+## 2. Stereo-Visual Odometry (Motion Estimation)
 
-We implemented a monocular VO pipeline to track the camera's path through **Sequence 01** (1101 frames).
+We implemented a Stereo-VO pipeline to track the camera's path through **KITTI Odometry Sequences** (e.g., Seq 05). Unlike Monocular VO, this method recovers **absolute scale** without ground truth.
 
 ### Pipeline Steps
-1.  **Feature Detection:** FAST Corner Detector.
-2.  **Feature Tracking:** Lucas-Kanade Optical Flow (KLT).
-3.  **Motion Estimation:** Nister’s 5-Point Algorithm (`findEssentialMat`) + RANSAC.
-4.  **Pose Recovery:** Decomposing the Essential Matrix into Rotation ($R$) and Translation ($t$).
-5.  **Scale Correction:** Since monocular VO lacks absolute scale, we use ground truth scale factors for trajectory plotting.
+1.  **Feature Detection:** `goodFeaturesToTrack` (Shi-Tomasi) on the current frame.
+2.  **Feature Tracking:** Lucas-Kanade Optical Flow (KLT) to track points from frame $t-1$ to $t$.
+3.  **Depth Recovery:** We use the **Stereo Disparity** (from Part A) of frame $t-1$ to back-project 2D tracked points into **3D space**.
+4.  **Motion Estimation (PnP):** We use `solvePnPRansac` to find the rotation ($R$) and translation ($t$) that minimizes the reprojection error between the 3D points (at $t-1$) and their 2D projections (at $t$).
+5.  **Trajectory Update:** The calculated motion is accumulated to update the global camera pose.
 
 ### Evaluation Metrics
 *   **ATE (Absolute Trajectory Error):** Root Mean Square Error of the global path.
